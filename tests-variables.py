@@ -1,4 +1,4 @@
-from parserWithCheck import check
+from ParserWithCheck import check
 
 if __name__ == '__main__':
     print(check("pi/4", "atg(1)"), "must be 1")
