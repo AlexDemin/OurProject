@@ -6,7 +6,7 @@ from sympy import*
 
 class ExampleLexer(sly.Lexer):
     tokens = { NUMBER, NAME, E, PI, SIN, COS, TG, TAN, CTG, CTAN, COT,
-               ARCSIN, ASIN, ARCCOS, ACOS, ARCTG, ARCTAN, ATG, ATAN, ARCCTG, ACTG, ACTAN, ARCCOT, ARCCOTAN,
+               ARCSIN, ASIN, ARCCOS, ACOS, ARCTG, ARCTAN, ATG, ATAN, ARCCTG, ACTG, ACTAN, ARCCOT, 
                LOG, LG, LN, SH, CH, SQRT}
 
     literals = { '+', '-', '*', '/', '^', '(', ')', '{', '}', '[', ']', ','}
@@ -36,7 +36,6 @@ class ExampleLexer(sly.Lexer):
     ACTG = 'actg'
     ACTAN = 'actan'
     ARCCOT = 'arccot'
-    ARCCOTAN = 'arccotan'
     SH = 'sh'
     CH = 'ch'
     LOG = 'log'
@@ -324,7 +323,7 @@ class ExampleParser(sly.Parser):
         ('right', 'UMINUS'),
         ('right', 'SIN', 'COS', 'TG', 'TAN', 'CTG', 'CTAN', 'COT',
                'ARCSIN', 'ASIN', 'ARCCOS', 'ACOS', 'ARCTG', 'ARCTAN', 'ATG', 'ATAN', 'ARCCTG', 'ACTG', 'ACTAN',
-               'ARCCOT', 'ARCCOTAN', 'LOG', 'LG', 'LN', 'SH', 'CH', 'SQRT'),
+               'ARCCOT', 'LOG', 'LG', 'LN', 'SH', 'CH', 'SQRT'),
         ('left', '^'),
     )
     tokens = ExampleLexer.tokens
@@ -413,7 +412,7 @@ class ExampleParser(sly.Parser):
     def expr(self, p):
         return ArctgNode(p.expr)
    
-    @_('ARCCTG expr', 'ACTG expr', 'ACTAN expr', 'ARCCOT expr', 'ARCCOTAN expr')
+    @_('ARCCTG expr', 'ACTG expr', 'ACTAN expr', 'ARCCOT expr')
     def expr(self, p):
         return ArcctgNode(p.expr)
 
@@ -437,6 +436,8 @@ class ExampleParser(sly.Parser):
     def expr(self, p):
         return Log2Node(p.expr0, p.expr1)
 
+
+
 def parse(s):
     lexer = ExampleLexer()
     parser = ExampleParser()
@@ -446,14 +447,10 @@ def answer(s):
     result = parse(s)
     return ("$" + str(result) + "$", result.compute())
 
-
-#hear another version of parser begins
-
-
 setOfVar = set()
 class SympyLexer(sly.Lexer):
     tokens = { NUMBER, NAME, E, PI, SIN, COS, TG, TAN, CTG, CTAN, COT,
-               ARCSIN, ASIN, ARCCOS, ACOS, ARCTG, ARCTAN, ATG, ATAN, ARCCTG, ACTG, ACTAN, ARCCOT, ARCCOTAN,
+               ARCSIN, ASIN, ARCCOS, ACOS, ARCTG, ARCTAN, ATG, ATAN, ARCCTG, ACTG, ACTAN, ARCCOT,
                LOG, LG, LN, SH, CH, SQRT}
 
     literals = { '+', '-', '*', '/', '^', '(', ')', '{', '}', '[', ']', ','}
@@ -483,7 +480,6 @@ class SympyLexer(sly.Lexer):
     ACTG = 'actg'
     ACTAN = 'actan'
     ARCCOT = 'arccot'
-    ARCCOTAN = 'arccotan'
     SH = 'sh'
     CH = 'ch'
     LOG = 'log'
@@ -749,7 +745,7 @@ class SympyParser(sly.Parser):
         ('right', 'UMINUS'),
         ('right', 'SIN', 'COS', 'TG', 'TAN', 'CTG', 'CTAN', 'COT',
                'ARCSIN', 'ASIN', 'ARCCOS', 'ACOS', 'ARCTG', 'ARCTAN', 'ATG', 'ATAN', 'ARCCTG', 'ACTG', 'ACTAN',
-               'ARCCOT', 'ARCCOTAN', 'LOG', 'LG', 'LN', 'SH', 'CH', 'SQRT'),
+               'ARCCOT', 'LOG', 'LG', 'LN', 'SH', 'CH', 'SQRT'),
         ('left', '^'),
     )
     
@@ -840,7 +836,7 @@ class SympyParser(sly.Parser):
     def expr(self, p):
         return SArctgNode(p.expr)
    
-    @_('ARCCTG expr', 'ACTG expr', 'ACTAN expr', 'ARCCOT expr', 'ARCCOTAN expr')
+    @_('ARCCTG expr', 'ACTG expr', 'ACTAN expr', 'ARCCOT expr')
     def expr(self, p):
         return SArcctgNode(p.expr)
 
@@ -858,7 +854,7 @@ class SympyParser(sly.Parser):
     
     @_('LG expr')
     def expr(self, p):
-        return SLog2Node(p.expr, 10)
+        return SLog2Node(p.expr, SNumNode(10))
     
     @_('LOG "(" expr "," expr ")" ')
     def expr(self, p):
@@ -873,18 +869,19 @@ def sympyParse(s):
 
 def sympyAnswer(s):
     result = sympyParse(s)
-    return (str(result), result.compute())
+    return (str(result))
 
 
 a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z = symbols('a b c d e f g h i j k l m n o p q r s t u v w x y z')
 
+from numpy import random
 
 def check(studentStr, teachStr):
     setOfVar = set()
     for i in range(97, 123):
         setOfVar.add(i)
-    a = sympify(sympyAnswer(studentStr)[0])
-    b = sympify(sympyAnswer(teachStr)[0])
+    a = sympify(sympyAnswer(studentStr))
+    b = sympify(sympyAnswer(teachStr))
     if ((b - a) == 0):
         return 1
     listVarib = list(setOfVar)
