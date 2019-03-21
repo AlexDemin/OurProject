@@ -5,7 +5,7 @@ from sympy import*
 from numpy import random
 
 
-class ExampleLexer(sly.Lexer):
+class VisualMathLexer(sly.Lexer):
     tokens = { NUMBER, NAME, E, PI, SIN, COS, TG, TAN, CTG, CTAN, COT,
                ARCSIN, ASIN, ARCCOS, ACOS, ARCTG, ARCTAN, ATG, ATAN, ARCCTG, ACTG, ACTAN, ARCCOT, 
                LOG, LG, LN, SH, CH, SQRT}
@@ -387,7 +387,7 @@ class Log2Node(ASTNode):
         return "(log(" + self.l.str2() + "," + self.r.str2() + "))"
 
 
-class ExampleParser(sly.Parser):
+class VisualMathParser(sly.Parser):
     precedence = (
         ('left', '+', '-'),
         ('left', '*', '/'),
@@ -397,7 +397,7 @@ class ExampleParser(sly.Parser):
                'ARCCOT', 'LOG', 'LG', 'LN', 'SH', 'CH', 'SQRT'),
         ('left', '^'),
     )
-    tokens = ExampleLexer.tokens
+    tokens = VisualMathLexer.tokens
 
     @_('NUMBER')
     def expr(self, p):
@@ -509,8 +509,8 @@ class ExampleParser(sly.Parser):
 
 
 def parse(s):
-    lexer = ExampleLexer()
-    parser = ExampleParser()
+    lexer = VisualMathLexer()
+    parser = VisualMathParser()
     return parser.parse(lexer.tokenize(s))
 
 def answer(s):
