@@ -511,6 +511,7 @@ class VisualMathParser(sly.Parser):
 def parse(s):
     lexer = VisualMathLexer()
     parser = VisualMathParser()
+    s = s.lower()
     return parser.parse(lexer.tokenize(s))
 
 def answer(s):
